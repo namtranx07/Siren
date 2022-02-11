@@ -118,12 +118,12 @@ extension PresentationManager {
 
         switch rules.alertType {
         case .force:
-            alertController?.addAction(updateAlertAction(completion: handler))
+            alertController?.addAction(updateAlertAction(alertType: nil,forCurrentAppStoreVersion: nil, completion: handler))
         case .option:
             alertController?.addAction(nextTimeAlertAction(completion: handler))
-            alertController?.addAction(updateAlertAction(completion: handler))
+            alertController?.addAction(updateAlertAction(alertType: nil, forCurrentAppStoreVersion: nil, completion: handler))
         case .skip:
-            alertController?.addAction(updateAlertAction(completion: handler))
+            alertController?.addAction(updateAlertAction(alertType: .skip, forCurrentAppStoreVersion: currentAppStoreVersion, completion: handler))
             alertController?.addAction(nextTimeAlertAction(completion: handler))
             alertController?.addAction(skipAlertAction(forCurrentAppStoreVersion: currentAppStoreVersion, completion: handler))
         case .none:
@@ -159,7 +159,7 @@ private extension PresentationManager {
     /// - Parameters:
     ///   - handler: The completion handler that returns the `.update` option.
     /// - Returns: The `Update` alert action.
-    func updateAlertAction(completion handler: CompletionHandler?) -> UIAlertAction {
+    func updateAlertAction(alertType: Rules.AlertType?, forCurrentAppStoreVersion currentAppStoreVersion: String?, completion handler: CompletionHandler?) -> UIAlertAction {
         let title: String
         if updateButtonTitle == AlertConstants.updateButtonTitle {
             title = localization.updateButtonTitle()
@@ -169,6 +169,9 @@ private extension PresentationManager {
 
         let action = UIAlertAction(title: title, style: .default) { _ in
             self.cleanUp()
+            if alertType == .skip {
+                handler?(.appStore, currentAppStoreVersion)
+            }
             handler?(.appStore, nil)
             return
         }

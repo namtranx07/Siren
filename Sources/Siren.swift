@@ -255,6 +255,9 @@ private extension Siren {
         switch alertAction {
         case .appStore:
             launchAppStore()
+            guard let currentAppStoreVersion = currentAppStoreVersion else { return }
+            UserDefaults.storedSkippedVersion = currentAppStoreVersion
+            UserDefaults.standard.synchronize()
         case .skip:
             guard let currentAppStoreVersion = currentAppStoreVersion else { return }
             UserDefaults.storedSkippedVersion = currentAppStoreVersion
